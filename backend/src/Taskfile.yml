@@ -1,0 +1,37 @@
+version: '3'
+
+
+tasks:
+  build:
+    desc: "Build the Go application"
+    cmds:
+      - go build -o bin/app main.go
+    sources:
+      - main.go
+      - '**/*.go'
+
+  run:
+    desc: "Run the Go application"
+    cmds:
+      - echo "🚀 Server Running on http://localhost:8080 :D" --color=false
+      - go run main.go
+
+  test:
+    desc: "Run tests"
+    cmds:
+      - go test ./...
+
+  clean:
+    desc: "Clean the build artifacts"
+    cmds:
+      - rm -rf bin
+
+  lint:
+    desc: "Run linter"
+    cmds:
+      - golangci-lint run
+
+  format:
+    desc: "Format the code"
+    cmds:
+      - go fmt ./...

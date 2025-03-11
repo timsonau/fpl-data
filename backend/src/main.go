@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -11,18 +12,27 @@ import (
 func main() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		data, err := getGeneralInfo()
-		if err != nil {
-			http.Error(w, "Failed to fetch API data", http.StatusInternalServerError)
-			return
-		}
+	router.HandleFunc("/general", getGeneralInfoHandler).Methods("GET")
 
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(data) // Send JSON response
-	})
+	err := http.ListenAndServe(":8000", router)
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
 
-	http.ListenAndServe(":8000", router)
+func getGeneralInfoHandler(w http.ResponseWriter, r *http.Request) {
+	data, err := getGeneralInfo()
+	if err != nil {
+		http.Error(w, "Failed to fetch API data", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	encoder := json.NewEncoder(w)
+	err = encoder.Encode(data)
+	if err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 func getGeneralInfo() (map[string]interface{}, error) {
