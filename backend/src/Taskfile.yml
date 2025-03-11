@@ -1,5 +1,6 @@
 version: '3'
 
+dotenv: ['../../.env']
 
 tasks:
   build:
@@ -12,8 +13,10 @@ tasks:
 
   run:
     desc: "Run the Go application"
+    env:
+      BASE_FPL_URL: $BASE_FPL_URL
     cmds:
-      - echo "🚀 Server Running on http://localhost:8080 :D" --color=false
+      - echo "🚀 Server Running on http://localhost:8000 :D" --color=false
       - go run main.go
 
   test:
